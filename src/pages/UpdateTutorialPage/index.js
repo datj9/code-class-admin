@@ -225,7 +225,7 @@ class UpdateTutorialPage extends Component {
                 ) : null}
                 <ThumbnailImage />
 
-                <CustomEditor editorValue={tutorial.content} handleEditorValue={this.handleEditorValue} />
+                <CustomEditor editorValue={editorValue} handleEditorValue={this.handleEditorValue} />
                 {errors.content && errors.content.includes("required") ? (
                     <div className='text-danger'>Vui lòng nhập nội dung</div>
                 ) : null}
