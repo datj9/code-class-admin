@@ -18,7 +18,15 @@ class UpdateTutorialPage extends Component {
             thumbnailUrl: "",
             difficultyLevel: 0,
             readingTime: 1,
-            technologies: { ReactJS: false, JavaScript: false, TypeScript: false },
+            technologies: {
+                Java: false,
+                JavaScript: false,
+                NodeJS: false,
+                TypeScript: false,
+                React: false,
+                Vue: false,
+                Angular: false,
+            },
         };
     }
 
@@ -150,12 +158,22 @@ class UpdateTutorialPage extends Component {
                 </FormSelect>
                 <div>
                     <p>Chọn công nghệ: </p>
+                    <FormCheckbox inline checked={technologies.Java} onChange={(e) => this.handleTechChange(e, "Java")}>
+                        Java
+                    </FormCheckbox>
                     <FormCheckbox
                         inline
                         checked={technologies.JavaScript}
                         onChange={(e) => this.handleTechChange(e, "JavaScript")}
                     >
                         JavaScript
+                    </FormCheckbox>
+                    <FormCheckbox
+                        inline
+                        checked={technologies.NodeJS}
+                        onChange={(e) => this.handleTechChange(e, "NodeJS")}
+                    >
+                        NodeJS
                     </FormCheckbox>
                     <FormCheckbox
                         inline
@@ -166,10 +184,20 @@ class UpdateTutorialPage extends Component {
                     </FormCheckbox>
                     <FormCheckbox
                         inline
-                        checked={technologies.ReactJS}
-                        onChange={(e) => this.handleTechChange(e, "ReactJS")}
+                        checked={technologies.React}
+                        onChange={(e) => this.handleTechChange(e, "React")}
                     >
-                        ReactJS
+                        React
+                    </FormCheckbox>
+                    <FormCheckbox inline checked={technologies.Vue} onChange={(e) => this.handleTechChange(e, "Vue")}>
+                        Vue
+                    </FormCheckbox>
+                    <FormCheckbox
+                        inline
+                        checked={technologies.Angular}
+                        onChange={(e) => this.handleTechChange(e, "Angular")}
+                    >
+                        Angular
                     </FormCheckbox>
                 </div>
                 {errors.tags && errors.tags.includes("required") ? (

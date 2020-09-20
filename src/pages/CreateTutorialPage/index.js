@@ -1,76 +1,10 @@
 import React, { Component } from "react";
 import "./style.css";
 import CustomEditor from "../../components/CustomEditor";
-// import CKEditor from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-// import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
-// import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
-// import Heading from "@ckeditor/ckeditor5-heading/src/heading";
-// import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
-// import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
-// import Font from "@ckeditor/ckeditor5-font/src/font";
-// import Image from "@ckeditor/ckeditor5-image/src/image";
-// import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar";
-// import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload";
-// import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize";
-// import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption";
-// import FileRepository from "@ckeditor/ckeditor5-upload/src/filerepository";
-// import CodeBlock from "@ckeditor/ckeditor5-code-block/src/codeblock";
-// import Indent from "@ckeditor/ckeditor5-indent/src/indent";
-// import IndentBlock from "@ckeditor/ckeditor5-indent/src/indentblock";
-// import List from "@ckeditor/ckeditor5-list/src/list";
-// import UploadAdapter from "../../adapter/UploadAdapter";
 import parse from "html-react-parser";
 import { FormInput, Button, Alert, FormCheckbox, FormSelect } from "shards-react";
 import { connect } from "react-redux";
 import { uploadImage, createTutorial, clearErrorsAndLink } from "../../redux/tutorials/actions";
-
-// const editorConfiguration = {
-//     plugins: [
-//         Essentials,
-//         Paragraph,
-//         Heading,
-//         Bold,
-//         Italic,
-//         Font,
-//         List,
-//         FileRepository,
-//         Image,
-//         ImageUpload,
-//         ImageToolbar,
-//         ImageResize,
-//         ImageCaption,
-//         CodeBlock,
-//         Indent,
-//         IndentBlock,
-//     ],
-//     toolbar: [
-//         "heading",
-//         "bold",
-//         "italic",
-//         "fontColor",
-//         "fontBackgroundColor",
-//         "bulletedList",
-//         "numberedList",
-//         "codeBlock",
-//         "outdent",
-//         "indent",
-//         "imageUpload",
-//         "selectAll",
-//         "undo",
-//         "redo",
-//     ],
-//     image: {
-//         toolbar: ["imageTextAlternative", "imageCaption"],
-//     },
-//     codeBlock: {
-//         languages: [
-//             { language: "javascript", label: "JavaScript" },
-//             { language: "css", label: "CSS" },
-//             { language: "bash", label: "Bash" },
-//         ],
-//     },
-// };
 
 class CreateTutorialPage extends Component {
     state = {
@@ -80,7 +14,15 @@ class CreateTutorialPage extends Component {
         thumbnailUrl: "",
         difficultyLevel: 0,
         readingTime: 1,
-        technologies: { ReactJS: false, JavaScript: false, TypeScript: false },
+        technologies: {
+            Java: false,
+            JavaScript: false,
+            NodeJS: false,
+            TypeScript: false,
+            React: false,
+            Vue: false,
+            Angular: false,
+        },
     };
 
     handleEditorValue = (event, editor) => {
@@ -183,6 +125,9 @@ class CreateTutorialPage extends Component {
                 </FormSelect>
                 <div>
                     <p>Chọn công nghệ: </p>
+                    <FormCheckbox inline checked={technologies.Java} onChange={(e) => this.handleTechChange(e, "Java")}>
+                        Java
+                    </FormCheckbox>
                     <FormCheckbox
                         inline
                         checked={technologies.JavaScript}
@@ -192,17 +137,35 @@ class CreateTutorialPage extends Component {
                     </FormCheckbox>
                     <FormCheckbox
                         inline
+                        checked={technologies.NodeJS}
+                        onChange={(e) => this.handleTechChange(e, "NodeJS")}
+                    >
+                        NodeJS
+                    </FormCheckbox>
+                    <FormCheckbox
+                        inline
                         checked={technologies.TypeScript}
                         onChange={(e) => this.handleTechChange(e, "TypeScript")}
                     >
                         TypeScript
                     </FormCheckbox>
+
                     <FormCheckbox
                         inline
-                        checked={technologies.ReactJS}
-                        onChange={(e) => this.handleTechChange(e, "ReactJS")}
+                        checked={technologies.React}
+                        onChange={(e) => this.handleTechChange(e, "React")}
                     >
-                        ReactJS
+                        React
+                    </FormCheckbox>
+                    <FormCheckbox inline checked={technologies.Vue} onChange={(e) => this.handleTechChange(e, "Vue")}>
+                        Vue
+                    </FormCheckbox>
+                    <FormCheckbox
+                        inline
+                        checked={technologies.Angular}
+                        onChange={(e) => this.handleTechChange(e, "Angular")}
+                    >
+                        Angular
                     </FormCheckbox>
                 </div>
                 {errors.tags && errors.tags.includes("required") ? (
@@ -242,7 +205,7 @@ class CreateTutorialPage extends Component {
                     {isLoading ? "Đang lưu..." : "Lưu bài viết"}
                 </Button>
                 <div className='mt-5'>
-                    <span className='h4'>Xem trước ở bên dưới</span>
+                    <span className='h4'>Xem trước ở bên dưới:</span>
                     <div>{parse(editorValue)}</div>
                 </div>
             </div>

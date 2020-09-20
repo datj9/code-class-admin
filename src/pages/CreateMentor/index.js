@@ -190,9 +190,13 @@ export default function CreateMentor() {
                         <option value='' disabled>
                             {specialitiesErr ? specialitiesErr : "Có thế mentor về"}
                         </option>
-                        {specialities.includes("React") ? null : <option>React</option>}
-                        {specialities.includes("Vue") ? null : <option>Vue</option>}
+                        {specialities.includes("Java") ? null : <option>Java</option>}
+                        {specialities.includes("JavaScript") ? null : <option>JavaScript</option>}
+                        {specialities.includes("TypeScript") ? null : <option>TypeScript</option>}
                         {specialities.includes("NodeJS") ? null : <option>NodeJS</option>}
+                        {specialities.includes("React") ? null : <option>React</option>}
+                        {specialities.includes("Angular") ? null : <option>Angular</option>}
+                        {specialities.includes("Vue") ? null : <option>Vue</option>}
                     </FormSelect>
                     <Button theme='secondary' className='mr-2' onClick={handleSpecialities}>
                         Thêm
