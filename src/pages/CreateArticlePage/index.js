@@ -4,9 +4,9 @@ import CustomEditor from "../../components/CustomEditor";
 import parse from "html-react-parser";
 import { FormInput, Button, Alert, FormCheckbox, FormSelect } from "shards-react";
 import { connect } from "react-redux";
-import { uploadImage, createTutorial, clearErrorsAndLink } from "../../redux/tutorials/actions";
+import { uploadImage, createArticle, clearErrorsAndLink, getTechnologies } from "../../redux/articles/actions";
 
-class CreateTutorialPage extends Component {
+class CreateArticlePage extends Component {
     state = {
         editorValue: "",
         title: "",
@@ -14,15 +14,8 @@ class CreateTutorialPage extends Component {
         thumbnailUrl: "",
         difficultyLevel: 0,
         readingTime: 1,
-        technologies: {
-            Java: false,
-            JavaScript: false,
-            NodeJS: false,
-            TypeScript: false,
-            React: false,
-            Vue: false,
-            Angular: false,
-        },
+        technologies: {},
+        setTechs: false,
     };
 
     handleEditorValue = (event, editor) => {
@@ -47,6 +40,8 @@ class CreateTutorialPage extends Component {
     };
 
     handleTechChange = (e, tech) => {
+        console.log(tech);
+        console.log(this.state.technologies);
         const technologies = this.state.technologies;
         technologies[tech] = !technologies[tech];
         this.setState({ technologies });
@@ -60,20 +55,38 @@ class CreateTutorialPage extends Component {
         this.setState({ difficultyLevel: parseInt(e.target.value) });
     };
 
-    createTutorial = () => {
-        const techsObj = this.state.technologies;
-        const searchTechnogies = Object.keys(techsObj).filter((tech) => techsObj[tech]);
+    createArticle = () => {
+        const technologies = this.props.technologies
+            .filter((tech) => this.state.technologies[tech.name])
+            .map((tech) => tech.id);
 
-        this.props.createTutorialReq({
+        this.props.createArticleReq({
             thumbnailUrl: this.props.linkUrl || this.state.thumbnailUrl,
             title: this.state.title,
             description: this.state.description,
             content: this.state.editorValue,
             difficultyLevel: this.state.difficultyLevel,
             readingTime: this.state.readingTime,
-            tags: searchTechnogies,
+            technologies,
         });
     };
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.technologies.length > 0 && state.setTechs === false) {
+            const technologies = {};
+
+            props.technologies.forEach((tech) => (technologies[tech.name] = false));
+
+            return {
+                technologies,
+                setTechs: true,
+            };
+        }
+    }
+
+    componentDidMount() {
+        this.props.getTechnologies();
+    }
 
     componentWillUnmount() {
         this.props.clearErrAndLink();
@@ -95,7 +108,7 @@ class CreateTutorialPage extends Component {
         };
 
         return (
-            <div className='container create-tutorial-page'>
+            <div className='container create-article-page'>
                 <div className='mb-5 h3'>Tạo bài hướng dẫn</div>
                 <FormInput placeholder='Tiêu đề' className='mb-3' onChange={this.handleTitle} />
                 {errors.title && errors.title.includes("required") ? (
@@ -115,7 +128,7 @@ class CreateTutorialPage extends Component {
                     <div className='text-danger mb-3'>Vui lòng nhập thời gian đọc</div>
                 ) : null}
                 <FormSelect className='mb-2' onChange={this.handleDifficulty}>
-                    <option invalid={errors.difficultyLevel ? true : false}>
+                    <option invalid={errors.difficultyLevel ? "true" : "false"}>
                         {errors.difficultyLevel ? "Vui lòng chọn độ khó" : "Chọn độ khó của bài"}
                     </option>
                     <option value={1}>1</option>
@@ -125,50 +138,18 @@ class CreateTutorialPage extends Component {
                 </FormSelect>
                 <div>
                     <p>Chọn công nghệ: </p>
-                    <FormCheckbox inline checked={technologies.Java} onChange={(e) => this.handleTechChange(e, "Java")}>
-                        Java
-                    </FormCheckbox>
-                    <FormCheckbox
-                        inline
-                        checked={technologies.JavaScript}
-                        onChange={(e) => this.handleTechChange(e, "JavaScript")}
-                    >
-                        JavaScript
-                    </FormCheckbox>
-                    <FormCheckbox
-                        inline
-                        checked={technologies.NodeJS}
-                        onChange={(e) => this.handleTechChange(e, "NodeJS")}
-                    >
-                        NodeJS
-                    </FormCheckbox>
-                    <FormCheckbox
-                        inline
-                        checked={technologies.TypeScript}
-                        onChange={(e) => this.handleTechChange(e, "TypeScript")}
-                    >
-                        TypeScript
-                    </FormCheckbox>
-
-                    <FormCheckbox
-                        inline
-                        checked={technologies.React}
-                        onChange={(e) => this.handleTechChange(e, "React")}
-                    >
-                        React
-                    </FormCheckbox>
-                    <FormCheckbox inline checked={technologies.Vue} onChange={(e) => this.handleTechChange(e, "Vue")}>
-                        Vue
-                    </FormCheckbox>
-                    <FormCheckbox
-                        inline
-                        checked={technologies.Angular}
-                        onChange={(e) => this.handleTechChange(e, "Angular")}
-                    >
-                        Angular
-                    </FormCheckbox>
+                    {this.props.technologies.map((tech) => (
+                        <FormCheckbox
+                            key={tech.id}
+                            inline
+                            checked={technologies[tech.name]}
+                            onChange={(e) => this.handleTechChange(e, tech.name)}
+                        >
+                            {tech.name}
+                        </FormCheckbox>
+                    ))}
                 </div>
-                {errors.tags && errors.tags.includes("required") ? (
+                {errors.technologies && errors.technologies.includes("required") ? (
                     <div className='text-danger mb-3'>Vui lòng chọn công nghệ</div>
                 ) : null}
                 <div className='custom-file mb-3'>
@@ -201,7 +182,7 @@ class CreateTutorialPage extends Component {
                         Đã tạo thành công
                     </Alert>
                 ) : null}
-                <Button disabled={isLoading} className='mt-5' onClick={this.createTutorial}>
+                <Button disabled={isLoading} className='mt-5' onClick={this.createArticle}>
                     {isLoading ? "Đang lưu..." : "Lưu bài viết"}
                 </Button>
                 <div className='mt-5'>
@@ -214,16 +195,18 @@ class CreateTutorialPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    linkUrl: state.tutorial.linkUrl,
-    isUploading: state.tutorial.isUploading,
-    isLoading: state.tutorial.isLoading,
-    message: state.tutorial.message,
-    errors: state.tutorial.errors,
+    linkUrl: state.article.linkUrl,
+    isUploading: state.article.isUploading,
+    isLoading: state.article.isLoading,
+    message: state.article.message,
+    errors: state.article.errors,
+    technologies: state.article.technologies,
 });
 const mapDispatchToProps = (dispatch) => ({
     uploadImageReq: (file) => dispatch(uploadImage(file)),
-    createTutorialReq: (tutorial) => dispatch(createTutorial(tutorial)),
+    createArticleReq: (article) => dispatch(createArticle(article)),
     clearErrAndLink: () => dispatch(clearErrorsAndLink()),
+    getTechnologies: () => dispatch(getTechnologies()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateTutorialPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateArticlePage);

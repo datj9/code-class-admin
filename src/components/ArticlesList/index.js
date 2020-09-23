@@ -15,11 +15,11 @@ import {
     ModalHeader,
     ModalFooter,
 } from "shards-react";
-import { deleteTutorial } from "../../redux/tutorials/actions";
+import { deleteArticle } from "../../redux/articles/actions";
 import CardLoader from "../CardLoader";
 import moment from "moment";
 
-class TutorialsList extends Component {
+class ArticlesList extends Component {
     state = { openModalConfirmDelete: false, activeId: "", activeTitle: "" };
 
     toggleOpenModalConfirmDelete = ({ id, title }) => {
@@ -36,35 +36,33 @@ class TutorialsList extends Component {
 
     render() {
         const { openModalConfirmDelete, activeId, activeTitle } = this.state;
-        const { tutorials, currentUser, isLoading, isSearching, pageSize = 8 } = this.props;
+        const { articles, currentUser, isLoading, isSearching, pageSize = 8 } = this.props;
 
-        const Tutorials = () => {
-            let tutorialsList = [];
+        const Articles = () => {
+            let articlesList = [];
             if (currentUser.userType === "admin") {
-                tutorialsList = tutorials.map((tutorial) => (
-                    <div className='card-item-admin text-decoration-none text-dark' key={tutorial.id}>
+                articlesList = articles.map((article) => (
+                    <div className='card-item-admin text-decoration-none text-dark' key={article.id}>
                         <Card>
-                            <CardImg src={tutorial.thumbnailUrl} />
+                            <CardImg src={article.thumbnailUrl} />
                             <CardBody>
                                 <CardTitle>
-                                    {tutorial.title.length <= 30 ? tutorial.title : tutorial.title.slice(0, 30)}
+                                    {article.title.length <= 30 ? article.title : article.title.slice(0, 30)}
                                 </CardTitle>
                                 <p>
-                                    {tutorial.description <= 30
-                                        ? tutorial.description
-                                        : tutorial.description.slice(0, 30)}
+                                    {article.description <= 30 ? article.description : article.description.slice(0, 30)}
                                 </p>
                             </CardBody>
                             <CardFooter className='d-flex justify-content-around'>
                                 <Button
                                     className='mr-2'
-                                    onClick={() => this.toggleOpenModalConfirmDelete(tutorial)}
+                                    onClick={() => this.toggleOpenModalConfirmDelete(article)}
                                     theme='danger'
                                 >
                                     Xóa Bài
                                 </Button>
 
-                                <Link to={`/update-tutorial/${tutorial.id}`}>
+                                <Link to={`/update-article/${article.id}`}>
                                     <Button className='ml-2' theme='warning'>
                                         Chỉnh sửa
                                     </Button>
@@ -75,7 +73,7 @@ class TutorialsList extends Component {
                 ));
                 return (
                     <>
-                        {tutorialsList}
+                        {articlesList}
                         <Modal open={openModalConfirmDelete} toggle={this.toggleOpenModalConfirmDelete}>
                             <ModalHeader>Xác nhận xóa bài</ModalHeader>
                             <ModalBody>
@@ -94,25 +92,25 @@ class TutorialsList extends Component {
                     </>
                 );
             } else {
-                return tutorials.map((tutorial) => (
+                return articles.map((article) => (
                     <Link
-                        to={`/tutorials/${tutorial.id}`}
+                        to={`/articles/${article.id}`}
                         className='card-item text-decoration-none text-dark'
-                        key={tutorial.id}
+                        key={article.id}
                     >
-                        <img className='mr-3' src={tutorial.thumbnailUrl} alt='' />
+                        <img className='mr-3' src={article.thumbnailUrl} alt='' />
                         <div className='d-flex flex-column'>
-                            <span className='tutorial-title'>{tutorial.title}</span>
-                            <span className='tutorial-description'>{tutorial.description}</span>
+                            <span className='article-title'>{article.title}</span>
+                            <span className='article-description'>{article.description}</span>
                             <span className='mt-2'>
-                                {Date.now() - new Date(tutorial.createdAt) <= 3 * 24 * 60 * 60 * 1000
-                                    ? moment(tutorial.createdAt).fromNow()
-                                    : moment(tutorial.createdAt).format("MMMM DD")}
+                                {Date.now() - new Date(article.createdAt) <= 3 * 24 * 60 * 60 * 1000
+                                    ? moment(article.createdAt).fromNow()
+                                    : moment(article.createdAt).format("MMMM DD")}
                             </span>
                             <div>
-                                {tutorial.tags.map((tag) => (
-                                    <Badge key={tag} className='mr-2' pill theme='secondary'>
-                                        {tag}
+                                {article.technologies.map((tech) => (
+                                    <Badge key={tech} className='mr-2' pill theme='secondary'>
+                                        {tech}
                                     </Badge>
                                 ))}
                             </div>
@@ -124,21 +122,21 @@ class TutorialsList extends Component {
 
         return (
             <div className='d-flex flex-wrap'>
-                {isLoading || isSearching ? <CardLoader numberOfCards={pageSize} /> : <Tutorials />}
+                {isLoading || isSearching ? <CardLoader numberOfCards={pageSize} /> : <Articles />}
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
-    tutorials: state.tutorial.tutorials,
-    isLoading: state.tutorial.isLoading,
-    isSearching: state.tutorial.isSearching,
+    articles: state.article.articles,
+    isLoading: state.article.isLoading,
+    isSearching: state.article.isSearching,
     currentUser: state.user.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    delTurorialReq: (id) => dispatch(deleteTutorial(id)),
+    delTurorialReq: (id) => dispatch(deleteArticle(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TutorialsList));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ArticlesList));

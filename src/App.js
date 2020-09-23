@@ -8,12 +8,11 @@ import Header from "./components/Header";
 import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
 import AdminPage from "./pages/AdminPage";
-import CreateTutorialPage from "./pages/CreateTutorialPage";
+import CreateArticlePage from "./pages/CreateArticlePage";
 import checkToken from "./utils/checkToken";
 import { connect } from "react-redux";
 import { setUser } from "./redux/user/actions";
-import TutorialPage from "./pages/TutorialPage";
-import UpdateTutorialPage from "./pages/UpdateTutorialPage";
+import UpdateArticle from "./pages/UpdateArticle";
 import TrackingUser from "./pages/TrackingUser";
 import CreateMentor from "./pages/CreateMentor";
 import ManageMentor from "./pages/ManageMentor";
@@ -40,16 +39,11 @@ class App extends Component {
                 <Switch>
                     <Route exact path='/' render={() => this.authorize(AdminPage)} />
                     <Route exact path='/sign-up' component={SignUpPage} />
-                    <Route exact path='/create-tutorial' render={() => this.authorize(CreateTutorialPage)} />
-                    <Route
-                        exact
-                        path='/update-tutorial/:tutorialId'
-                        render={() => this.authorize(UpdateTutorialPage)}
-                    />
+                    <Route exact path='/create-article' render={() => this.authorize(CreateArticlePage)} />
+                    <Route exact path='/update-article/:articleId' render={() => this.authorize(UpdateArticle)} />
                     <Route exact path='/create-mentor' render={() => this.authorize(CreateMentor)} />
                     <Route exact path='/manage-mentor' render={() => this.authorize(ManageMentor)} />
                     <Route exact path='/tracking-users' render={() => this.authorize(TrackingUser)} />
-                    <Route exact path='/tutorials/:tutorialId' component={TutorialPage} />
                 </Switch>
             </Router>
         );
